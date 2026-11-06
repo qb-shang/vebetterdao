@@ -4,6 +4,7 @@ import { deployProxy } from "../../helpers"
 import { XAppReviewManager } from "../../../typechain-types"
 import { ethers } from "hardhat"
 import { updateConfig } from "../../helpers/config"
+import { transferAdminRole, transferUpgraderRole } from "../../helpers/roles"
 
 export async function main() {
   if (!process.env.NEXT_PUBLIC_APP_ENV) {
@@ -32,6 +33,18 @@ export async function main() {
 
   console.log("XAppReviewManager deployed at:", await xAppReviewManager.getAddress())
   console.log("Version:", await xAppReviewManager.version())
+
+  // Rating and review creation revert with PassportNotSet until the passport is linked.
+  await (
+    await xAppReviewManager.connect(deployer).setVeBetterPassport(envConfig.veBetterPassportContractAddress)
+  ).wait()
+  console.log("VeBetterPassport linked:", envConfig.veBetterPassportContractAddress)
+
+  if (TEMP_ADMIN !== contractsConfig.CONTRACTS_ADMIN_ADDRESS) {
+    await transferUpgraderRole(xAppReviewManager, deployer, contractsConfig.CONTRACTS_ADMIN_ADDRESS)
+    await transferAdminRole(xAppReviewManager, deployer, contractsConfig.CONTRACTS_ADMIN_ADDRESS)
+    console.log("Admin and upgrader roles transferred to", contractsConfig.CONTRACTS_ADMIN_ADDRESS)
+  }
 
   console.log("Updating the config file with the new XAppReviewManager contract address")
   try {

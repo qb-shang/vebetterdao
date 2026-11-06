@@ -15,6 +15,7 @@ import {
   XAllocationPool,
   XAllocationVoting,
   NodeManagementV3,
+  XAppReviewManager,
 } from "../../typechain-types"
 import { ContractTransactionResponse } from "ethers"
 
@@ -32,7 +33,8 @@ export const transferAdminRole = async (
     | X2EarnApps
     | X2EarnRewardsPool
     | X2EarnCreator
-    | TimeLock,
+    | TimeLock
+    | XAppReviewManager,
   oldAdmin: HardhatEthersSigner,
   newAdminAddress: string,
 ) => {
@@ -286,7 +288,8 @@ export const transferUpgraderRole = async (
     | X2EarnCreator
     | GalaxyMember
     | VoterRewards
-    | X2EarnRewardsPool,
+    | X2EarnRewardsPool
+    | XAppReviewManager,
   admin: HardhatEthersSigner,
   newAddress: string,
 ) => {

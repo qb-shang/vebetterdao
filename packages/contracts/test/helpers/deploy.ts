@@ -1296,6 +1296,7 @@ export const getOrDeployContractInstances = async ({
     owner.address,
     owner.address,
   ])) as XAppReviewManager
+  await xAppReviewManager.connect(owner).setVeBetterPassport(veBetterPassportContractAddress)
 
   const contractAddresses: Record<string, string> = {
     B3TR: await b3tr.getAddress(),

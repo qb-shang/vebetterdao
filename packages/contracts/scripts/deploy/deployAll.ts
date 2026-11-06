@@ -1311,6 +1311,12 @@ export async function deployAll(config: ContractsConfig) {
   console.log("Deploying XAppReviewManager")
   const xAppReviewManager = (await deployProxy("XAppReviewManager", [TEMP_ADMIN, TEMP_ADMIN])) as XAppReviewManager
   console.log("XAppReviewManager deployed at:", await xAppReviewManager.getAddress())
+  // Rating and review creation revert with PassportNotSet until the passport is linked.
+  await xAppReviewManager
+    .connect(deployer)
+    .setVeBetterPassport(await veBetterPassport.getAddress())
+    .then(async (tx: TransactionResponse) => await tx.wait())
+  console.log("VeBetterPassport linked to XAppReviewManager")
 
   const date = new Date(performance.now() - start)
   console.log(`================  Contracts deployed in ${date.getMinutes()}m ${date.getSeconds()}s `)
@@ -1713,6 +1719,9 @@ export async function deployAll(config: ContractsConfig) {
     await transferAdminRole(x2EarnApps, deployer, config.CONTRACTS_ADMIN_ADDRESS)
 
     await transferAdminRole(timelock, deployer, config.CONTRACTS_ADMIN_ADDRESS)
+
+    await transferUpgraderRole(xAppReviewManager, deployer, config.CONTRACTS_ADMIN_ADDRESS)
+    await transferAdminRole(xAppReviewManager, deployer, config.CONTRACTS_ADMIN_ADDRESS)
 
     await x2EarnCreator
       .connect(deployer)

@@ -133,7 +133,9 @@ contract XAppReviewManager is AccessControlUpgradeable, UUPSUpgradeable {
         uint256 communityScoreMinRatings;
     }
 
-    // keccak256(abi.encode(uint256(keccak256("b3tr.storage.XAppReviewManager")) - 1)) & ~bytes32(uint256(0xff))
+    // NOTE: this value does not equal the ERC-7201 formula for "b3tr.storage.XAppReviewManager"
+    // (which gives 0x9dbb2928e56385cf3a222ec1f9ea7136342a4b06a73d9907eafd0ab212380e00).
+    // It is kept as-is because deployed proxies already store state at this slot.
     bytes32 private constant XAppReviewManagerStorageLocation =
         0x496a0144db85d0a76089a964a1bb51cc6084a4ba98297bcf893c5b54a1a70300;
 
